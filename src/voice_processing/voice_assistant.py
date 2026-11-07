@@ -115,34 +115,33 @@ class VoiceAssistant:
                         self.transcription_task.cancel()
 
                 # TODO: fix the audio capture and assistant interruption
-                elif self.is_speaking:
-                    if allow_interruption and time.time() - t2 > interrupt_threshold:
-                        audio_int16_list = [np.frombuffer(audio_chunk, np.int16) for audio_chunk in data[-60:]]
-                        audio_data = np.concatenate(audio_int16_list)
-                        # print(len(data))
-                        # print(f'{time.time():.3f} interruption check 1')
+                elif self.is_speaking and allow_interruption and time.time() - t2 > interrupt_threshold:
+                    audio_int16_list = [np.frombuffer(audio_chunk, np.int16) for audio_chunk in data[-60:]]
+                    audio_data = np.concatenate(audio_int16_list)
+                    # print(len(data))
+                    # print(f'{time.time():.3f} interruption check 1')
 
-                        if time.time() - self.prev_recognition_time > recognition_freq:
-                            self.prev_recognition_time = time.time()
-                            if self.recognition_task and not self.recognition_task.done():
-                                self.log_info("cancelling voice recognition task")
-                                self.recognition_task.cancel()
-                            self.log_info("Creating voice recognition_task")
-                            self.recognition_task = asyncio.create_task(self.is_bot_speaking(audio_data, 0.5))
-                            # if not is_bot:
-                            #     self.log_info("speech_interrupted")
-                            #     if self.tts_task and not self.tts_task.done():
-                            #         logger.info(f"Speech interrupted, stopping TTS")
-                            #         self.tts.stop()
-                            #         self.tts_task.cancel()
-                            #         self.is_speaking = False
-                            #
-                            #     self.speech_committed = False
-                            #     data = prev_data + data
-                            #
-                            #     if self.transcription_task and not self.transcription_task.done():
-                            #         logger.info("Canceling transcription task due to new speech detection")
-                            #         self.transcription_task.cancel()
+                    if time.time() - self.prev_recognition_time > recognition_freq:
+                        self.prev_recognition_time = time.time()
+                        if self.recognition_task and not self.recognition_task.done():
+                            self.log_info("cancelling voice recognition task")
+                            self.recognition_task.cancel()
+                        self.log_info("Creating voice recognition_task")
+                        self.recognition_task = asyncio.create_task(self.is_bot_speaking(audio_data, 0.5))
+                        # if not is_bot:
+                        #     self.log_info("speech_interrupted")
+                        #     if self.tts_task and not self.tts_task.done():
+                        #         logger.info(f"Speech interrupted, stopping TTS")
+                        #         self.tts.stop()
+                        #         self.tts_task.cancel()
+                        #         self.is_speaking = False
+                        #
+                        #     self.speech_committed = False
+                        #     data = prev_data + data
+                        #
+                        #     if self.transcription_task and not self.transcription_task.done():
+                        #         logger.info("Canceling transcription task due to new speech detection")
+                        #         self.transcription_task.cancel()
 
             else:
                 if time.time() - t > speech_commit_threshold and self.recording_started:

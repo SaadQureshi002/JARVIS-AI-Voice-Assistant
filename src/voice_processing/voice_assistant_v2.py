@@ -236,10 +236,9 @@ class VoiceAssistant:
                         st = time.time()
                         t2 = time.time()
 
-                    elif self.is_speaking:
-                        if allow_interruption and time.time() - t2 > interrupt_threshold:
-                            # self.audio_data = self.convert_to_audio(self.data[-100:])
-                            self.interrupt = True
+                    elif self.is_speaking and allow_interruption and time.time() - t2 > interrupt_threshold:
+                        # self.audio_data = self.convert_to_audio(self.data[-100:])
+                        self.interrupt = True
 
                 else:
                     if time.time() - t > speech_commit_threshold and self.recording_started:
